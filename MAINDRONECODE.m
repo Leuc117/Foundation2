@@ -8,7 +8,6 @@ clear;
 %this section finds the dimensions and physical properties of various parts
 %of the drone
 drone = input('prototype or medical: ', 's');
-wingTheo = input('Theoretical area of wing: ');
 wingSpan = input('Wing Span: ');
 
 wingWet = input('Wetted area of wing: ');
@@ -48,8 +47,9 @@ end
 
 %output begins
 fprintf('Overall fuselage length ...... %.4f m\n', fuselLength);
-fprintf('Overall drone weight ......... %.4f kg\n', droneMass);
-fprintf('Wing theoretical area ........ %.4f m^2\n', wingTheo);
+fprintf('Overall drone weight ......... %.4f kg\n', droneMass + battMass);
+fprintf('Wing theoretical area ........ %.4f m^2\n', ...
+    wingWet + (avgWingChord * fuselDiam));
 fprintf('Wing span .................... %.4f m\n', wingSpan);
 fprintf('Diameter of fuselage ......... %.4f m\n', fuselDiam);
 
