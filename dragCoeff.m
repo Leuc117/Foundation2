@@ -1,6 +1,6 @@
-function [dragCoeff1, dragCoeff2] = dragCoeff(smallChordWing, LargeChordWing, ...
-    lengthWing, thickWing, smallChordVertTail, LargeChordVertTail, ...
-    lengthVertTail, thickVertTail, smallChordHorTail, LargeChordHorTail, ...
+function [dragCoeff1, dragCoeff2] = dragCoeff(avgChordWing, ...
+    lengthWing, thickWing, avgChordVertTail,  ...
+    thickVertTail, avgChordHorTail,  ...
     lengthHorTail, thickHorTail, lengthFuse, diamFuse)
 %calculates drag coefficients 
 
@@ -15,20 +15,18 @@ function [dragCoeff1, dragCoeff2] = dragCoeff(smallChordWing, LargeChordWing, ..
 %diamFuse           width of fuselage sideways while looking down at drone
 
 %% Zero lift drag
-%Precalculated coeffitions of friction
+%Precalculated coefficients of friction
 coeffFricWings = (0.455) / (4.556 ^ 2.58);
 coeffFricFuse = (0.455) / (5.26 ^ 2.58);
 
 %main wings
-avgChordWing = (largeChordWing + smallChordWing) / 2;
 theoAreaWing = 2 * lengthWing * avgChordWing;
-actAreaWing = theoAreaWing - (largeChordWing * diamFuse);
+actAreaWing = theoAreaWing - (avgChordWing * diamFuse);
 ffWing = 1 + 2 * (thickWing / avgChordWing) + 60 * ...
     ((thickWing / avgChordWing) ^ 4);
 zeroLDragWing = (coeffFricWings * ffWing * actAreaWing) / theoAreaWing;
 
 %horizontal tail
-avgChordHorTail = (largeChordHorTail + smallChordHorTail) / 2;
 theoAreaHorTail = 2 * lengthHorTail * avgChordHorTail;
 actAreaHorTail = theoAreaHorTail - (largeChordHorTail * diamFuse);
 ffHorTail = 1 + 2 * (thickHorTail / avgChordHorTail) + 60 * ...
@@ -37,7 +35,6 @@ zeroLDragHorTail = (coeffFricWings * ffHorTail * ...
     actAreaHorTail) / theoAreaHorTail;
 
 %vertical tail
-avgChordVertTail = (largeChordVertTail + smallChordVertTail) / 2;
 ffVertTail = 1 + 2 * (thickVertTail / avgChordVertTail) + 60 * ...
     ((thickVertTail / avgChordVertTail) ^ 4);
 zeroLDragVertTail = (coeffFricWings * ffVertTail);
