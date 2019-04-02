@@ -1,0 +1,57 @@
+function [dragCoeff1, dragCoeff2] = dragCoeff(avgChordWing, ...
+    wingSpan, thickWing, wetWing, avgChordVertTail,  ...
+    thickVertTail, wetVertTail, avgChordHorTail,  ...
+    thickHorTail, wetHorTail, lengthFuse, diamFuse, wetFuse, massDrone)
+%calculates drag coefficients 
+
+%dragCoeff1         coefficient for drag that will be multiplied by v^2
+%dragCoeff2         coefficient for drag that will be multiplied by 1/v^2
+
+%avgChordxxx        average chord of wing
+%wetxxx             wetted area of part
+%thickxxx           average depth of wing
+%lengthFuse         distance on fuselage from tip to tail
+%diamFuse           width of fuselage sideways while looking down at drone
+
+%% Zero lift drag
+%Precalculated coefficients of friction
+coeffFricWings = (0.455) / (4.556 ^ 2.58);
+coeffFricFuse = (0.455) / (5.26 ^ 2.58);
+
+%main wings
+Sref = .1282;
+actAreaWing = Sref - (avgChordWing * diamFuse);
+ffWing = 1 + 2 * (thickWing / avgChordWing) + 60 * ...
+    ((thickWing / avgChordWing) ^ 4);
+zeroLDragWing = (coeffFricWings * ffWing * actAreaWing) / Sref;
+
+%horizontal tail
+ffHorTail = 1 + 2 * (thickHorTail / avgChordHorTail) + 60 * ...
+    ((thickHorTail / avgChordHorTail) ^ 4);
+zeroLDragHorTail = (coeffFricWings * ffHorTail);
+
+%vertical tail
+ffVertTail = 1 + 2 * (thickVertTail / avgChordVertTail) + 60 * ...
+    ((thickVertTail / avgChordVertTail) ^ 4);
+zeroLDragVertTail = (coeffFricWings * ffVertTail);
+
+%fuselage
+theoAreaFuse = 2 * pi * (diamFuse / 2) * lengthFuse + ...
+    2 * pi * ((diamFuse / 2) ^ 2);
+ffFuse = 1 + 1.5 * ((diamFuse / lengthFuse) ^ (3 / 2)) + 7 *...
+    ((diamFuse / lengthFuse) ^ 3);
+zeroLDragFuse = (coeffFricFuse * ffFuse * wetFuse) / theoAreaFuse;
+
+ZLDragCoeff = zeroLDragWing + zeroLDragHorTail + zeroLDragVertTail +...
+    zeroLDragFuse;
+
+%% Induced Drag
+aspectRatio = (wingSpan ^ 2) / Sref;
+liftCoeff = (2 * massDrone) / (1.134 * Sref);
+IDragCoeff = (liftCoeff ^ 2) / (pi * 0.85 * aspectRatio);
+
+%% Final drag coefficients
+dragCoeff1 = (1 / 2) * 1.134 * (Sref + wetHorTail +...
+    wetVertTail + theoAreaFuse) * ZLDragCoeff;
+dragCoeff2 = (1 / 2) * 1.134 * (Sref + wetHorTail +...
+    wetVertTail + theoAreaFuse) * IDragCoeff;
