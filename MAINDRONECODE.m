@@ -48,7 +48,7 @@ end
 
 %output begins
 fprintf('Overall fuselage length ...... %.4f m\n', fuselLength);
-fprintf('Overall drone weight ...... %.4f kg\n', droneMass);
+fprintf('Overall drone weight ......... %.4f kg\n', droneMass);
 fprintf('Wing theoretical area ........ %.4f m^2\n', wingTheo);
 fprintf('Wing span .................... %.4f m\n', wingSpan);
 fprintf('Diameter of fuselage ......... %.4f m\n', fuselDiam);
@@ -73,4 +73,4 @@ title('Thrust and Drag as a Function of Velocity');
 
 %this needs to be done at max velocity
 myRange = range(batteryEnergy, battMass, droneMass, Thrust(30), drag(30));
-fprintf('Range of the Drone.............. %f\n', myRange);
+fprintf('Range of the Drone............ %f\n', myRange);
