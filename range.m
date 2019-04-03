@@ -1,4 +1,4 @@
-function [range] = range(eStar, massBatt, massTot, liftAtMaxV, dragAtMaxV)
+function [range] = range(eStar, massBatt, massDrone, dragAtMaxV)
 %calculates range
 
 %eStar          batterySpecific energy
@@ -7,6 +7,6 @@ function [range] = range(eStar, massBatt, massTot, liftAtMaxV, dragAtMaxV)
 %liftAtMaxV     lift a maximum velocity
 %dragAtMaxV     drag at maximum velocity
 
-range = eStar * (massBatt / massTot) * ...
-    (1 / 9.8) * (liftAtMaxV / dragAtMaxV) * 0.8;
+range = (eStar * (massBatt / massDrone) * ...
+    (1 / 9.8) * ((massDrone * 9.8) / dragAtMaxV) * 0.8) / 3600;
 end

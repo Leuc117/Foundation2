@@ -19,21 +19,20 @@ coeffFricWings = (0.455) / (4.556 ^ 2.58);
 coeffFricFuse = (0.455) / (5.26 ^ 2.58);
 
 %main wings
-sRef = wetWing + (avgChordWing * diamFuse);
-actAreaWing = sRef - (avgChordWing * diamFuse);
+sRef = (wetWing - (avgChordWing * diamFuse)) / 2;
 ffWing = 1 + 2 * (thickWing / avgChordWing) + 60 * ...
     ((thickWing / avgChordWing) ^ 4);
-zeroLDragWing = (coeffFricWings * ffWing * actAreaWing) / sRef;
+zeroLDragWing = (coeffFricWings * ffWing * wetWing) / sRef;
 
 %horizontal tail
 ffHorTail = 1 + 2 * (thickHorTail / avgChordHorTail) + 60 * ...
     ((thickHorTail / avgChordHorTail) ^ 4);
-zeroLDragHorTail = (coeffFricWings * ffHorTail) / sRef;
+zeroLDragHorTail = (coeffFricWings * ffHorTail * wetHorTail) / sRef;
 
 %vertical tail
 ffVertTail = 1 + 2 * (thickVertTail / avgChordVertTail) + 60 * ...
     ((thickVertTail / avgChordVertTail) ^ 4);
-zeroLDragVertTail = (coeffFricWings * ffVertTail) / sRef;
+zeroLDragVertTail = (coeffFricWings * ffVertTail * wetVertTail) / sRef;
 
 %fuselage
 ffFuse = 1 + 1.5 * ((diamFuse / lengthFuse) ^ (3 / 2)) + 7 *...
@@ -51,3 +50,4 @@ IDragCoeff = (liftCoeff ^ 2) / (pi * 0.85 * aspectRatio);
 %% Final drag coefficients
 dragCoeff1 = (1 / 2) * 1.134 * (sRef) * ZLDragCoeff;
 dragCoeff2 = (1 / 2) * 1.134 * (sRef) * IDragCoeff;
+end

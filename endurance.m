@@ -5,5 +5,5 @@ function [endurance] = endurance(eAvail, dragAtMaxV, maxV)
 %dragAtMaxV         drag at maximum velocity
 %maxV               maximum velocity
 
-endurance = (eAvail * 0.8) / (dragAtMaxV * maxV);
+endurance = ((eAvail * 0.8) / (dragAtMaxV * maxV));
 end

@@ -8,42 +8,41 @@ clear;
 %this section finds the dimensions and physical properties of various parts
 %of the drone
 drone = input('prototype or medical: ', 's');
-wingSpan = input('Wing Span: ');
+wingSpan = input('Wing Span in m: ');
 
-wingWet = input('Wetted area of wing: ');
-fuselWet = input('Wetted area of fuselage: ');
-horTailWet = input('Wetted area of horizontal tail: ');
-vertTailWet = input('Wetted area of vertical tail: ');
+wingWet = input('Wetted area of wing in m^2: ');
+fuselWet = input('Wetted area of fuselage in m^2: ');
+horTailWet = input('Wetted area of horizontal tail in m^2: ');
+vertTailWet = input('Wetted area of vertical tail in m^2: ');
 
-fuselDiam = input('Average diameter of fuselage: ');
-fuselLength = input('Overall length of fuselage: ');
+fuselDiam = input('Average diameter of fuselage in m: ');
+fuselLength = input('Overall length of fuselage in m: ');
 
-avgWingThick = input('Average thickness of the wing: ');
-avgHorTailThick = input('Average thickness of the horizontal tail: ');
-avgVertTailThick = input('Average thickness of the vertical tail: ');
+avgWingThick = input('Average thickness of the wing in m: ');
+avgHorTailThick = input('Average thickness of the horizontal tail in m: ');
+avgVertTailThick = input('Average thickness of the vertical tail in m: ');
 
-avgWingChord = input('Average chord length of wing: ');
-avgHorTailChord = input('Average chord length of horizontal tail: ');
-avgVertTailChord = input('Average chord length of vertical tail: ');
+avgWingChord = input('Average chord length of wing in m: ');
+avgHorTailChord = input('Average chord length of horizontal tail in m: ');
+avgVertTailChord = input('Average chord length of vertical tail in m: ');
 
-droneMass = input('Mass of the drone: ');
-battMass = input('Mass of the battery: ');
+droneMass = input('Mass of the drone without battery in kg: ');
+battMass = input('Mass of the battery in kg: ');
 
-if (strcmp(drone, 'prototype'))
+if (strcmp(drone, 'prototype')) %given values for tiny trainer and prototype
     RPM = 15000;
     pitch  =.0762;
     diam = .1524;
-    batteryEnergy = 360000;
-elseif (strcmp(drone, 'medical'))
+    batteryEnergy = 31968;
+    batteryOutput = 360000;
+elseif (strcmp(drone, 'medical')) %given values for option 2 full-scale drone
     RPM = 1806;
     pitch  =.22;
     diam = .254;
-    batteryEnergy = 720000;
+    batteryEnergy = 0 %gotta find this
+    batteryOutput = 720000;
+    
 end
-
-velocity = 1:30;
-thrust = 1:30;
-drag = 1:30;
 
 %output begins
 fprintf('\nOverall fuselage length ...... %.4f m\n', fuselLength);
@@ -56,37 +55,42 @@ fprintf('Diameter of fuselage ......... %.4f m\n', fuselDiam);
 [drag1, drag2] = dragCoeff(avgWingChord, wingSpan, avgWingThick, wingWet,...
     avgVertTailChord, avgVertTailThick, vertTailWet, ...
     avgHorTailChord, avgHorTailThick, horTailWet,...
-    fuselLength, fuselDiam, fuselWet, droneMass + battMass);
+    fuselLength, fuselDiam, fuselWet, droneMass);
 
-for i = 1 : 30
-    thrust(i) = thrustFinder(RPM, pitch, diam, i);
-    drag(i) = (drag1 * i^2) + (drag2/(i^2)); 
+%creates and gives value to thrust and drag vectors
+velocity = 0:.25:30;
+thrust = zeros(121, 1);
+drag = zeros(121, 1);
+for i = 0:.25:30
+    thrust((i * 4) + 1) = thrustFinder(RPM, pitch, diam, i);
+    drag((i * 4) + 1) = (drag1 * i^2) + (drag2/(i^2)); 
 end
 
-plot(thrust, velocity, 'g');
+%plots thrust and drag
+plot(velocity, thrust, 'g');
 hold on;
-plot(drag, velocity, 'r');
+plot(velocity, drag, 'r');
 
-xlabel('Velocity m/s');
-ylabel('thrust(green), Drag(red)');
-title('thrust and Drag as a Function of Velocity');
+ylim([0, thrust(1)]);
+xlabel('Velocity in m/s');
+ylabel('Thrust(green), Drag(red)in N');
+title('Thrust and Drag as a Function of Velocity');
 
-maxVelocity = 0;
-for i = 1 : 30
-    if (abs(thrust(i) - drag(i)) < 0.25)
-        maxVelocity = i;
-        break
+%finds the second point where thrust and drag lines intersect
+maxVelocityIdx = 0;
+for i = 1:121
+    if (abs(thrust(i) - drag(i)) < 0.1)
+        maxVelocityIdx = i;
     end
 end
 
-%this needs to be done at max velocity
-if (maxVelocity > 0)
-    myRange = range(batteryEnergy, battMass, droneMass, thrust(maxVelocity),...
-    drag(maxVelocity));
-    fprintf('Range of the Drone............ %f m\n', myRange);
-    fprintf('Maximum Velocity.............. %f m/s\n', maxVelocity);
-    myEndurance = endurance(batteryEnergy, drag(maxVelocity), maxVelocity);
-    fprintf('Endurance of the Drone........ %f m\n', myEndurance);
+%final outputs
+if (maxVelocityIdx > 0)
+    myRange = range(batteryOutput, battMass, droneMass, drag(maxVelocityIdx));
+    fprintf('Range of the Drone............ %.2f m\n', myRange);
+    fprintf('Maximum Velocity.............. %.1f m/s\n', (maxVelocityIdx / 4));
+    myEndurance = endurance(batteryEnergy, drag(maxVelocityIdx), (maxVelocityIdx / 4));
+    fprintf('Endurance of the Drone........ %.2f h\n', myEndurance);
 else
     disp('Range of the Drone............ could not be calculated');
     disp('Maximum Velocity.............. could not be calculated');
