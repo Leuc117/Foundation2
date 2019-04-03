@@ -45,7 +45,7 @@ velocity = 1:30;
 drag = 1:30;
 
 %output begins
-fprintf('Overall fuselage length ...... %.4f m\n', fuselLength);
+fprintf('\nOverall fuselage length ...... %.4f m\n', fuselLength);
 fprintf('Overall drone weight ......... %.4f kg\n', droneMass + battMass);
 fprintf('Wing theoretical area ........ %.4f m^2\n', ...
     wingWet + (avgWingChord * fuselDiam));
@@ -72,20 +72,22 @@ title('Thrust and Drag as a Function of Velocity');
 
 maxVelocity = 0;
 for i = 1 : 30
-    if (abs(thrust(i) - drag(i)) < 0.25)
+    if (abs(Thrust(i) - drag(i)) < 0.25)
         maxVelocity = i;
         break
     end
 end
 
 %this needs to be done at max velocity
-myRange = range(batteryEnergy, battMass, droneMass, Thrust(maxVelocity),...
-    drag(maxVelocity));
-fprintf('Range of the Drone............ %f m\n', myRange);
 if (maxVelocity > 0)
+    myRange = range(batteryEnergy, battMass, droneMass, Thrust(maxVelocity),...
+    drag(maxVelocity));
+    fprintf('Range of the Drone............ %f m\n', myRange);
     fprintf('Maximum Velocity.............. %f m/s\n', maxVelocity);
+    myEndurance = endurance(batteryEnergy, drag(maxVelocity), maxVelocity);
+    fprintf('Endurance of the Drone........ %f m\n', myEndurance);
 else
+    disp('Range of the Drone............ could not be calculated');
     disp('Maximum Velocity.............. could not be calculated');
+    disp('Endurance..................... could not be calculated');
 end
-myEndurance = endurance(batteryEnergy, drag(maxVelocity), maxVelocity);
-fprintf('Endurance of the Drone........ %f m\n', myEndurance);
