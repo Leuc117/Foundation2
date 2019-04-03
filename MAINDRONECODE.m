@@ -60,7 +60,7 @@ fprintf('Diameter of fuselage ......... %.4f m\n', fuselDiam);
 
 for i = 1 : 30
     thrust(i) = thrustFinder(RPM, pitch, diam, i);
-    drag(i) = (drag2 * i^2) + (drag1/(i^2)); 
+    drag(i) = (drag1 * i^2) + (drag2/(i^2)); 
 end
 
 plot(thrust, velocity, 'g');
