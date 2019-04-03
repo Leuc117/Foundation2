@@ -33,17 +33,16 @@ if (strcmp(drone, 'prototype'))
     RPM = 15000;
     pitch  =.0762;
     diam = .1524;
-    velocity = 1:30;
-    drag = 1:30;
     batteryEnergy = 360000;
 elseif (strcmp(drone, 'medical'))
     RPM = 1806;
     pitch  =.22;
     diam = .254;
-    velocity = 1:30;
-    drag = 1:30;
     batteryEnergy = 720000;
 end
+
+velocity = 1:30;
+drag = 1:30;
 
 %output begins
 fprintf('Overall fuselage length ...... %.4f m\n', fuselLength);
@@ -71,6 +70,22 @@ xlabel('Velocity m/s');
 ylabel('Thrust(green), Drag(red)');
 title('Thrust and Drag as a Function of Velocity');
 
+maxVelocity = 0;
+for i = 1 : 30
+    if (abs(thrust(i) - drag(i)) < 0.25)
+        maxVelocity = i;
+        break
+    end
+end
+
 %this needs to be done at max velocity
-myRange = range(batteryEnergy, battMass, droneMass, Thrust(30), drag(30));
-fprintf('Range of the Drone............ %f\n', myRange);
+myRange = range(batteryEnergy, battMass, droneMass, Thrust(maxVelocity),...
+    drag(maxVelocity));
+fprintf('Range of the Drone............ %f m\n', myRange);
+if (maxVelocity > 0)
+    fprintf('Maximum Velocity.............. %f m/s\n', maxVelocity);
+else
+    disp('Maximum Velocity.............. could not be calculated');
+end
+myEndurance = endurance(batteryEnergy, drag(maxVelocity), maxVelocity);
+fprintf('Endurance of the Drone........ %f m\n', myEndurance);
