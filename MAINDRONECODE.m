@@ -39,7 +39,7 @@ elseif (strcmp(drone, 'medical')) %given values for option 2 full-scale drone
     RPM = 1806;
     pitch  =.22;
     diam = .254;
-    batteryEnergy = 0 %gotta find this
+    batteryEnergy = 219780;
     batteryOutput = 720000;
     
 end
