@@ -42,6 +42,7 @@ elseif (strcmp(drone, 'medical'))
 end
 
 velocity = 1:30;
+thrust = 1:30;
 drag = 1:30;
 
 %output begins
@@ -52,27 +53,27 @@ fprintf('Wing theoretical area ........ %.4f m^2\n', ...
 fprintf('Wing span .................... %.4f m\n', wingSpan);
 fprintf('Diameter of fuselage ......... %.4f m\n', fuselDiam);
 
-Thrust = thrustFinder(RPM, pitch, diam);
 [drag1, drag2] = dragCoeff(avgWingChord, wingSpan, avgWingThick, wingWet,...
     avgVertTailChord, avgVertTailThick, vertTailWet, ...
     avgHorTailChord, avgHorTailThick, horTailWet,...
     fuselLength, fuselDiam, fuselWet, droneMass + battMass);
 
 for i = 1 : 30
-   drag(i) = (drag2 * i^2) + (drag1/(i^2)); 
+    thrust(i) = thrustFinder(RPM, pitch, diam, i);
+    drag(i) = (drag2 * i^2) + (drag1/(i^2)); 
 end
 
-plot(Thrust, velocity, 'g');
+plot(thrust, velocity, 'g');
 hold on;
 plot(drag, velocity, 'r');
 
 xlabel('Velocity m/s');
-ylabel('Thrust(green), Drag(red)');
-title('Thrust and Drag as a Function of Velocity');
+ylabel('thrust(green), Drag(red)');
+title('thrust and Drag as a Function of Velocity');
 
 maxVelocity = 0;
 for i = 1 : 30
-    if (abs(Thrust(i) - drag(i)) < 0.25)
+    if (abs(thrust(i) - drag(i)) < 0.25)
         maxVelocity = i;
         break
     end
@@ -80,7 +81,7 @@ end
 
 %this needs to be done at max velocity
 if (maxVelocity > 0)
-    myRange = range(batteryEnergy, battMass, droneMass, Thrust(maxVelocity),...
+    myRange = range(batteryEnergy, battMass, droneMass, thrust(maxVelocity),...
     drag(maxVelocity));
     fprintf('Range of the Drone............ %f m\n', myRange);
     fprintf('Maximum Velocity.............. %f m/s\n', maxVelocity);
