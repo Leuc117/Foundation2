@@ -27,18 +27,19 @@ avgHorTailChord = input('Average chord length of horizontal tail in m: ');
 avgVertTailChord = input('Average chord length of vertical tail in m: ');
 
 droneMass = input('Mass of the drone without battery in kg: ');
-battMass = input('Mass of the battery in kg: ');
 
 if (strcmp(drone, 'prototype')) %given values for tiny trainer and prototype
     RPM = 15000;
     pitch  =.0762;
     diam = .1524;
+    battMass = .0765;
     batteryEnergy = 31968;
     batteryOutput = 360000;
 elseif (strcmp(drone, 'medical')) %given values for option 2 full-scale drone
     RPM = 1806;
     pitch  =.22;
     diam = .254;
+    battMass = .48;
     batteryEnergy = 219780;
     batteryOutput = 720000;
     
