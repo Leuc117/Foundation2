@@ -8,5 +8,5 @@ function [range] = range(eStar, massBatt, massDrone, dragAtMaxV)
 %dragAtMaxV     drag at maximum velocity
 
 range = (eStar * (massBatt / massDrone) * ...
-    (1 / 9.8) * ((massDrone * 9.8) / dragAtMaxV) * 0.8) / 3600;
+    (1 / 9.8) * ((massDrone * 9.8) / dragAtMaxV) * 0.8) / 1000;
 end

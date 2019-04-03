@@ -49,7 +49,7 @@ end
 fprintf('\nOverall fuselage length ...... %.4f m\n', fuselLength);
 fprintf('Overall drone weight ......... %.4f kg\n', droneMass + battMass);
 fprintf('Wing theoretical area ........ %.4f m^2\n', ...
-    wingWet + (avgWingChord * fuselDiam));
+    ((wingWet - (avgWingChord * fuselDiam)) / 2));
 fprintf('Wing span .................... %.4f m\n', wingSpan);
 fprintf('Diameter of fuselage ......... %.4f m\n', fuselDiam);
 
@@ -79,17 +79,19 @@ title('Thrust and Drag as a Function of Velocity');
 
 %finds the second point where thrust and drag lines intersect
 maxVelocityIdx = 0;
+diff = 0.05;
 for i = 1:121
-    if (abs(thrust(i) - drag(i)) < 0.1)
+    if (abs(thrust(i) - drag(i)) < diff)
         maxVelocityIdx = i;
+        diff = abs(thrust(i) - drag(i));
     end
 end
 
 %final outputs
 if (maxVelocityIdx > 0)
     myRange = range(batteryOutput, battMass, droneMass, drag(maxVelocityIdx));
-    fprintf('Range of the Drone............ %.2f m\n', myRange);
-    fprintf('Maximum Velocity.............. %.1f m/s\n', (maxVelocityIdx / 4));
+    fprintf('Range of the Drone............ %.2f km\n', myRange);
+    fprintf('Maximum Velocity.............. %.2f m/s\n', (maxVelocityIdx / 4));
     myEndurance = endurance(batteryEnergy, drag(maxVelocityIdx), (maxVelocityIdx / 4));
     fprintf('Endurance of the Drone........ %.2f h\n', myEndurance);
 else
